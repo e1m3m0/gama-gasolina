@@ -33,7 +33,7 @@ interface Pump {
 export class App implements OnInit {
   protected title = 'gama-gasolina';
 
-  saveButtonText: string = 'Save Prices';
+  saveButtonText: string = 'Guardar Precios';
   selectedPumpId: number = 1;
   creditCardSales: number = 0;
   cashDue: number = 0;
@@ -119,17 +119,17 @@ export class App implements OnInit {
   savePrices(): void {
     try {
       localStorage.setItem('globalGasPrices', JSON.stringify(this.globalPrices));
-      this.saveButtonText = 'Saved!';
-      
+      this.saveButtonText = 'Guardado!';
+
       setTimeout(() => {
-        this.saveButtonText = 'Save Prices';
+        this.saveButtonText = 'Guardar Precios';
       }, 2000);
     } catch (error) {
       console.log('Local storage not available - prices saved in session only');
-      this.saveButtonText = 'Session Only';
-      
+      this.saveButtonText = 'Solo Sesión';
+
       setTimeout(() => {
-        this.saveButtonText = 'Save Prices';
+        this.saveButtonText = 'Guardar Precios';
       }, 2000);
     }
   }
