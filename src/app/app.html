@@ -1,173 +1,144 @@
 <!-- Barra de navegación con Precios Globales de Gasolina y Botones de Acción -->
-    <nav class="navbar">
-      <div class="navbar-content">
-        <h2 class="navbar-title">Precios Globales de Gasolina</h2>
-        <div class="price-form">
-          <div *ngFor="let gasType of gasTypes; let i = index" class="price-input-group">
-            <label>{{ gasType.shortName }}</label>
-            <div class="price-input-wrapper">
-              <span class="currency">$</span>
-              <input 
-                type="number" 
-                [(ngModel)]="globalPrices[gasType.name]" 
-                (input)="updateAllPumpPrices(gasType.name)"
-                step="0.01"
-                min="0"
-                placeholder="0.00"
-                class="price-input">
-            </div>
-          </div>
-        </div>
-        <div class="navbar-buttons">
-          <button class="save-prices-btn" [class.saved]="saveButtonText === 'Guardado!'" (click)="savePrices()">{{ saveButtonText }}</button>
-          <button class="reset-btn" (click)="resetSelectedPump()">Restablecer {{ selectedPump?.name }}</button>
-          <button class="reset-all-btn" (click)="resetAllPumps()">Restablecer Todo</button>
+<nav class="navbar">
+  <div class="navbar-content">
+    <h2 class="navbar-title">Precios Globales de Gasolina</h2>
+    <div class="price-form">
+      <div *ngFor="let gasType of gasTypes; let i = index" class="price-input-group">
+        <label>{{ gasType.shortName }}</label>
+        <div class="price-input-wrapper">
+          <span class="currency">$</span>
+          <input type="number" [(ngModel)]="globalPrices[gasType.name]" (input)="updateAllPumpPrices(gasType.name)"
+            step="0.01" min="0" placeholder="0.00" class="price-input">
         </div>
       </div>
-    </nav>
+    </div>
+    <div class="navbar-buttons">
+      <button class="save-prices-btn" [class.saved]="saveButtonText === 'Guardado!'" (click)="savePrices()">{{
+        saveButtonText }}</button>
+      <button class="reset-btn" (click)="resetSelectedPump()">Restablecer {{ selectedPump?.name }}</button>
+      <button class="reset-all-btn" (click)="resetAllPumps()">Restablecer Todo</button>
+    </div>
+  </div>
+</nav>
 
-    <div class="container">
-      <h1>Calculadora de Costos de Gasolina Multi-Surtidor</h1>
-      <p class="subtitle">Rastrea la gasolina dispensada en 8 surtidores con todos los tipos de combustible</p>
-      
-      <!-- Pestañas de Selección de Surtidor -->
-      <div class="pump-tabs">
-        <button 
-          *ngFor="let pump of pumps" 
-          [class.active]="selectedPumpId === pump.id"
-          (click)="selectPump(pump.id)"
-          class="pump-tab">
-          {{ pump.name }}
-        </button>
-      </div>
-      
-      <!-- Detalles del Surtidor Seleccionado -->
-      <div class="pump-container" *ngIf="selectedPump">
-        <h2 class="pump-title">{{ selectedPump.name }}</h2>
-        
-        <div class="gas-grid">
-          <div *ngFor="let gasData of selectedPump.gasData; let i = index" class="gas-card">
-            <h3>{{ getGasTypeByName(gasData.gasType)?.name }}</h3>
-            
-            <!-- <div class="price-display">
-              <span class="price-label">Precio Actual:</span>
-              <span class="price-value">${{ gasData.price.toFixed(2) }}/gal</span>
-            </div> -->
-            
-            <div class="input-group">
-              <label>Volumen Inicial (galones)</label>
-              <input 
-                type="number" 
-                [(ngModel)]="gasData.beginningVolume" 
-                (input)="calculateCost(selectedPump.id, i)"
-                step="1.0"
-                min="0"
-                placeholder="ingrese valor">
-            </div>
-            
-            <div class="input-group">
-              <label>Volumen Final (galones)</label>
-              <input 
-                type="number" 
-                [(ngModel)]="gasData.endingVolume" 
-                (input)="calculateCost(selectedPump.id, i)"
-                step="1.0"
-                min="0"
-                placeholder="ingrese valor">
-            </div>
-            
-            <div class="results">
-              <div class="result-item">
-                <span class="label">Volumen Dispensado:</span>
-                <span class="value">{{ gasData.volumeDispensed.toFixed(1) }} gal</span>
-              </div>
-              <div class="result-item total">
-                <span class="label">Costo Total:</span>
-                <span class="value">${{ gasData.cost.toFixed(2) }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Resumen del Surtidor -->
-        <div class="pump-summary">
-          <h3>Resumen de {{ selectedPump.name }}</h3>
-          <div class="summary-grid">
-            <div class="summary-item">
-              <span class="label">Volumen Total Dispensado:</span>
-              <span class="value">{{ getPumpTotalVolume(selectedPump.id).toFixed(1) }} gal</span>
-            </div>
-            <div class="summary-item total">
-              <span class="label">Ventas Totales:</span>
-              <span class="value">${{ getPumpTotalCost(selectedPump.id).toFixed(2) }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Resumen de Todos los Surtidores -->
-      <div class="grand-summary">
-        <h2>Resumen de Todos los Surtidores</h2>
-        <div class="pumps-overview">
-          <div *ngFor="let pump of pumps" class="pump-overview-card">
-            <h4>{{ pump.name }}</h4>
-            <div class="overview-stats">
-              <div class="stat">
-                <span class="stat-label">Volumen:</span>
-                <span class="stat-value">{{ getPumpTotalVolume(pump.id).toFixed(1) }} gal</span>
-              </div>
-              <div class="stat">
-                <span class="stat-label">Ventas:</span>
-                <span class="stat-value">${{ getPumpTotalCost(pump.id).toFixed(2) }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="grand-totals">
-          <div class="grand-total-item">
-            <span class="label">Volumen Total General:</span>
-            <span class="value">{{ getGrandTotalVolume().toFixed(1) }} galones</span>
-          </div>
-          <div class="grand-total-item total">
-            <span class="label">Ventas Totales Generales:</span>
-            <span class="value grand-total">${{ getGrandTotalCost().toFixed(2) }}</span>
-          </div>
+<div class="container">
+  <h1>Calculadora de Costos de Gasolina Multi-Surtidor</h1>
+  <p class="subtitle">Rastrea la gasolina dispensada en 8 surtidores con todos los tipos de combustible</p>
+
+  <!-- Pestañas de Selección de Surtidor -->
+  <div class="pump-tabs">
+    <button *ngFor="let pump of pumps" [class.active]="selectedPumpId === pump.id" (click)="selectPump(pump.id)"
+      class="pump-tab">
+      {{ pump.name }}
+    </button>
+  </div>
+
+  <!-- Detalles del Surtidor Seleccionado -->
+  <div class="pump-container" *ngIf="selectedPump">
+    <h2 class="pump-title">{{ selectedPump.name }}</h2>
+
+    <div class="gas-grid">
+      <div *ngFor="let gasData of selectedPump.gasData; let i = index" class="gas-card">
+        <h3>{{ getGasTypeByName(gasData.gasType)?.name }}</h3>
+
+        <div class="input-group">
+          <label>Volumen Inicial (galones)</label>
+          <input type="number" [(ngModel)]="gasData.beginningVolume" (input)="calculateCost(selectedPump.id, i)"
+            step="1.0" min="0" placeholder="ingrese valor">
         </div>
 
-        <!-- Resumen de Pagos -->
-        <div class="payment-summary">
-          <h3>Resumen de Pagos</h3>
-          <div class="payment-form">
-            <div class="payment-input-group">
-              <label>Ventas con Tarjeta de Crédito:</label>
-              <div class="currency-input-wrapper">
-                <span class="currency">$</span>
-                <input 
-                  type="number" 
-                  [(ngModel)]="creditCardSales" 
-                  (input)="getCashAmountDue()"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  class="payment-input">
-              </div>
-            </div>
-            <div class="payment-results">
-              <div class="payment-result-item">
-                <span class="label">Ventas Totales:</span>
-                <span class="value">${{ getGrandTotalCost().toFixed(2) }}</span>
-              </div>
-              <div class="payment-result-item">
-                <span class="label">Ventas con Tarjeta de Crédito:</span>
-                <span class="value">${{ (creditCardSales || 0).toFixed(2) }}</span>
-              </div>
-              <div class="payment-result-item cash-due">
-                <span class="label">Efectivo Adeudado:</span>
-                <span class="value">${{ (cashDue || 0).toFixed(2) }}</span>
-              </div>
-            </div>
+        <div class="input-group">
+          <label>Volumen Final (galones)</label>
+          <input type="number" [(ngModel)]="gasData.endingVolume" (input)="calculateCost(selectedPump.id, i)" step="1.0"
+            min="0" placeholder="ingrese valor">
+        </div>
+
+        <div class="results">
+          <div class="result-item">
+            <span class="label">Volumen Dispensado:</span>
+            <span class="value">{{ gasData.volumeDispensed.toFixed(1) }} gal</span>
+          </div>
+          <div class="result-item total">
+            <span class="label">Costo Total:</span>
+            <span class="value">${{ gasData.cost.toFixed(2) }}</span>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Resumen del Surtidor -->
+    <div class="pump-summary">
+      <h3>Resumen de {{ selectedPump.name }}</h3>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <span class="label">Volumen Total Dispensado:</span>
+          <span class="value">{{ getPumpTotalVolume(selectedPump.id).toFixed(1) }} gal</span>
+        </div>
+        <div class="summary-item total">
+          <span class="label">Ventas Totales:</span>
+          <span class="value">${{ getPumpTotalCost(selectedPump.id).toFixed(2) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumen de Todos los Surtidores -->
+  <div class="grand-summary">
+    <h2>Resumen de Todos los Surtidores</h2>
+    <div class="pumps-overview">
+      <div *ngFor="let pump of pumps" class="pump-overview-card">
+        <h4>{{ pump.name }}</h4>
+        <div class="overview-stats">
+          <div class="stat">
+            <span class="stat-label">Volumen:</span>
+            <span class="stat-value">{{ getPumpTotalVolume(pump.id).toFixed(1) }} gal</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Ventas:</span>
+            <span class="stat-value">${{ getPumpTotalCost(pump.id).toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grand-totals">
+      <div class="grand-total-item">
+        <span class="label">Volumen Total General:</span>
+        <span class="value">{{ getGrandTotalVolume().toFixed(1) }} galones</span>
+      </div>
+      <div class="grand-total-item total">
+        <span class="label">Ventas Totales Generales:</span>
+        <span class="value grand-total">${{ getGrandTotalCost().toFixed(2) }}</span>
+      </div>
+    </div>
+
+    <!-- Resumen de Pagos -->
+    <div class="payment-summary">
+      <h3>Resumen de Pagos</h3>
+      <div class="payment-form">
+        <div class="payment-input-group">
+          <label>Ventas con Tarjeta de Crédito:</label>
+          <div class="currency-input-wrapper">
+            <span class="currency">$</span>
+            <input type="number" [(ngModel)]="creditCardSales" (input)="getCashAmountDue()" step="0.01" min="0"
+              placeholder="0.00" class="payment-input">
+          </div>
+        </div>
+        <div class="payment-results">
+          <div class="payment-result-item">
+            <span class="label">Ventas Totales:</span>
+            <span class="value">${{ getGrandTotalCost().toFixed(2) }}</span>
+          </div>
+          <div class="payment-result-item">
+            <span class="label">Ventas con Tarjeta de Crédito:</span>
+            <span class="value">${{ (creditCardSales || 0).toFixed(2) }}</span>
+          </div>
+          <div class="payment-result-item cash-due">
+            <span class="label">Efectivo Adeudado:</span>
+            <span class="value">${{ (cashDue || 0).toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

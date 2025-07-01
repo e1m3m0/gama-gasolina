@@ -63,21 +63,16 @@ export class App implements OnInit {
 
   initializePumps(): void {
 
-    let names=[
-      "Metro No. 1 lado 1",
-      "Metro No. 1 lado 2",
+    let names = [
       "Metro No. 2 lado 1",
       "Metro No. 2 lado 2",
       "Metro No. 3 lado 1",
       "Metro No. 3 lado 2",
-      "Metro No. 4 lado 1",
-      "Metro No. 4 lado 2",
     ]
     for (let i = 0; i < names.length; i++) {
       const pump: Pump = {
         id: i,
         name: names[i],
-        // creditCardSales: 0,
         gasData: this.gasTypes.map(gasType => ({
           gasType: gasType.name,
           price: 0,
@@ -134,7 +129,7 @@ export class App implements OnInit {
     }
   }
 
- updateAllPumpPrices(gasTypeName: string): void {
+  updateAllPumpPrices(gasTypeName: string): void {
     this.pumps.forEach(pump => {
       const gasData = pump.gasData.find(data => data.gasType === gasTypeName);
       if (gasData) {
@@ -183,20 +178,20 @@ export class App implements OnInit {
 
   // New function to get cash amount due (total cost - credit card sales)
   getCashAmountDue(): number {
-    return this.cashDue =Math.max(0, this.getGrandTotalCost() - this.creditCardSales);
+    return this.cashDue = Math.max(0, this.getGrandTotalCost() - this.creditCardSales);
   }
 
   // Updated reset functions to include credit card sales and volumeDispensed
   resetSelectedPump(): void {
     if (!this.selectedPump) return;
-    
+
     this.selectedPump.gasData.forEach(gasData => {
       gasData.beginningVolume = 0;
       gasData.endingVolume = 0;
       gasData.volumeDispensed = 0; // Changed from volumeUsed
       gasData.cost = 0;
     });
-   
+
 
   }
 
@@ -211,8 +206,8 @@ export class App implements OnInit {
       this.creditCardSales = 0; // Reset credit card sales
       this.cashDue = 0; // Reset cash due
     });
-    
-    
+
+
   }
 
   // New function to reset only credit card sales
