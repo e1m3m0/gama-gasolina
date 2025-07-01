@@ -71,7 +71,7 @@ export class App implements OnInit {
       "Metro No. 3 lado 1",
       "Metro No. 3 lado 2",
       "Metro No. 4 lado 1",
-      "Metro No. 4 lado 4",
+      "Metro No. 4 lado 2",
     ]
     for (let i = 0; i < names.length; i++) {
       const pump: Pump = {
